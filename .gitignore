@@ -1,0 +1,7 @@
+/myapi/node_modules
+/myapi/package.json
+/myapi/package-lock.json
+
+/ionicnewest/node_modules
+/ionicnewest/package.json
+/ionicnewest/package-lock.json
