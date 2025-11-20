@@ -14,7 +14,6 @@ Aplikasi frontend adalah aplikasi mobile hybrid yang dibangun menggunakan framew
     - Halaman untuk membuat postingan (`CreatePostpage.vue`)
     - Tiga halaman tab (`Tab1Page.vue`, `Tab2Page.vue`, `Tab3Page.vue`)
 - **Komunikasi dengan Backend**: Menggunakan `axios` untuk membuat permintaan HTTP ke API backend.
-- **Fitur Native**: Menggunakan Capacitor (`@capacitor/core`) untuk mengakses fitur-fitur native pada perangkat mobile.
 
 ## Backend (`myapi`)
 
