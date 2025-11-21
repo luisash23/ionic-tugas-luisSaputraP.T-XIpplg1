@@ -155,12 +155,88 @@ app.post('/data/post', verifyToken, (req, res) =>{
   }
 
   const sql = 'INSERT INTO field_data (id, userid, title, body) VALUES (?, ?, ?, ?)';
-  db.query(sql, [id, userid, title, body], (err, res) => {
+  db.query(sql, [id, userid, title, body], (err, result) => {
     if (err) {
       console.error('Error saat menambah data:', err);
       return res.status(500).json({ message: 'Terjadi kesalahan server.' });
     }
 
     return res.status(201).json({ message: 'Data berhasil ditambahkan.', data: { id, userid, title, body } });
+  });
+});
+
+// Endpoint untuk mengambil satu data berdasarkan ID
+app.get('/data/:id', verifyToken, (req, res) => {
+  const { id } = req.params;
+  const sql = 'SELECT * FROM field_data WHERE id = ?';
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error('Error saat query:', err);
+      return res.status(500).json({ message: 'Terjadi kesalahan server.' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Data tidak ditemukan.' });
+    }
+    res.status(200).json({
+      message: 'Data berhasil diambil',
+      data: results[0]
+    });
+  });
+});
+
+// Endpoint untuk mengedit data
+app.put('/data/edit/:id', verifyToken, (req, res) => {
+  const { id } = req.params;
+  const { userid, title, body } = req.body;
+
+  const fieldsToUpdate = [];
+  const values = [];
+
+  if (userid) {
+    fieldsToUpdate.push('userid = ?');
+    values.push(userid);
+  }
+  if (title) {
+    fieldsToUpdate.push('title = ?');
+    values.push(title);
+  }
+  if (body) {
+    fieldsToUpdate.push('body = ?');
+    values.push(body);
+  }
+
+  if (fieldsToUpdate.length === 0) {
+    return res.status(400).json({ message: 'Tidak ada field yang diupdate.' });
+  }
+
+  values.push(id);
+
+  const sql = `UPDATE field_data SET ${fieldsToUpdate.join(', ')} WHERE id = ?`;
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error saat mengedit data:', err);
+      return res.status(500).json({ message: 'Terjadi kesalahan server.' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Data tidak ditemukan.' });
+    }
+    return res.status(200).json({ message: 'Data berhasil diubah.' });
+  });
+});
+
+// Endpoint untuk menghapus data
+app.delete('/data/delete/:id', verifyToken, (req, res) => {
+  const { id } = req.params;
+  const sql = 'DELETE FROM field_data WHERE id = ?';
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Error saat menghapus data:', err);
+      return res.status(500).json({ message: 'Terjadi kesalahan server.' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Data tidak ditemukan.' });
+    }
+    return res.status(200).json({ message: 'Data berhasil dihapus.' });
   });
 });
